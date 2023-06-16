@@ -9,8 +9,9 @@ export interface ProductListingsProps {
 export interface CartItem{
     stickerName:string;
     stickerImage: string;
-    stickerId: number;
+    stickerId: string;
     stickerPrice: number;
     quantity:number;
     stickerSize:string;
+    userId:string;
 }

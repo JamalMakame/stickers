@@ -1,5 +1,5 @@
 import { createContextId, useStore } from "@builder.io/qwik";
-import { CartItem } from "./types";
+import { CartItem, ProductListingsProps } from "./types";
 
 
 export const cartContext = createContextId<CartItem[]>(
@@ -7,3 +7,4 @@ export const cartContext = createContextId<CartItem[]>(
 );
 
 
+export const productContext = createContextId<{ meta: ProductListingsProps[] }>("productsContext");

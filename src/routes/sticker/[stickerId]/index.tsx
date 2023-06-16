@@ -6,10 +6,13 @@ import {
     useStore,
 } from "@builder.io/qwik";
 import { Form, Link, routeAction$, routeLoader$ } from "@builder.io/qwik-city";
+
 import { Price } from "~/components/sticker-card/sticker-card";
 import ProductSection from "~/components/sticker-section/sticker-section";
+import { prisma } from "~/lib/helpers";
 import { productListings } from "~/lib/mock-data";
-import type { ProductListingsProps } from "~/lib/types";
+import type { CartItem, ProductListingsProps } from "~/lib/types";
+import { useAuthSession } from "~/routes/plugin@auth";
 
 export const useSticker = routeLoader$(async ({ params }) => {
     const stickerId = params.stickerId;
@@ -69,14 +72,35 @@ export const StickerInfo = component$(() => {
 });
 
 export const useSubmitSticker = routeAction$(async (data) => {
-    console.log(data);
+    const stickerId = data.stickerId;
+
+    const sticker = productListings.meta.find((sticker) => sticker.id === stickerId);
+    const item = {
+        stickerName: sticker?.name,
+        stickerImage: sticker?.image,
+        stickerPrice: sticker?.price as unknown as number,
+        stickerSize: data.stickerSize,
+        quantity: data.quantity,
+        user: data.user,
+        userId: "cliz3k8ip0000v4iwq0nvx6sx",
+    } as unknown as CartItem;
+
+    console.log(item);
+
+    await prisma.cartItem.create({
+        data: item,
+    });
 });
 
 export const StickerForm = component$(() => {
     const submitSticker = useSubmitSticker();
+    const sticker = useContext(StickerContext);
+    const session = useAuthSession();
     return (
         <div class="w-full">
             <Form action={submitSticker}>
+                <input type="text" hidden name="stickerId" value={sticker.meta.id} />
+                <input type="text" hidden name="user" value={session.value?.user?.name}></input>
                 <div class="flex justify-start space-x-2 w-full">
                     <div class="flex flex-col items-start space-y-1 flex-grow-0">
                         <label for="quantity" class="text-gray-500 text-base">
