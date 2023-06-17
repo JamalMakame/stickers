@@ -63,7 +63,7 @@ model CartItem {
   stickerImage String
   stickerId    String
   stickerPrice Float
-  quantity     String
+  quantity     Int
   stickerSize  String
 
   // This line creates a foreign key to the User model

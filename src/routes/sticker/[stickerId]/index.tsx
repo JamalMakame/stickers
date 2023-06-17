@@ -11,7 +11,7 @@ import { Price } from "~/components/sticker-card/sticker-card";
 import ProductSection from "~/components/sticker-section/sticker-section";
 import { prisma } from "~/lib/helpers";
 import { productListings } from "~/lib/mock-data";
-import type { CartItem, ProductListingsProps } from "~/lib/types";
+import type { ProductListingsProps } from "~/lib/types";
 import { useAuthSession } from "~/routes/plugin@auth";
 
 export const useSticker = routeLoader$(async ({ params }) => {
@@ -75,20 +75,21 @@ export const useSubmitSticker = routeAction$(async (data) => {
     const stickerId = data.stickerId;
 
     const sticker = productListings.meta.find((sticker) => sticker.id === stickerId);
-    const item = {
-        stickerName: sticker?.name,
-        stickerImage: sticker?.image,
-        stickerPrice: sticker?.price as unknown as number,
-        stickerSize: data.stickerSize,
-        quantity: data.quantity,
-        user: data.user,
-        userId: "cliz3k8ip0000v4iwq0nvx6sx",
-    } as unknown as CartItem;
-
-    console.log(item);
 
     await prisma.cartItem.create({
-        data: item,
+        data: {
+            stickerName: sticker?.name as string,
+            stickerImage: sticker?.image as string,
+            stickerPrice: sticker?.price as number,
+            stickerSize: data.stickerSize as string,
+            quantity: parseInt(data.quantity as string),
+            stickerId: stickerId as string,
+            user: {
+                connect: {
+                    id: "cliz3k8ip0000v4iwq0nvx6sx",
+                },
+            },
+        },
     });
 });
 
@@ -100,7 +101,6 @@ export const StickerForm = component$(() => {
         <div class="w-full">
             <Form action={submitSticker}>
                 <input type="text" hidden name="stickerId" value={sticker.meta.id} />
-                <input type="text" hidden name="user" value={session.value?.user?.name}></input>
                 <div class="flex justify-start space-x-2 w-full">
                     <div class="flex flex-col items-start space-y-1 flex-grow-0">
                         <label for="quantity" class="text-gray-500 text-base">
@@ -132,24 +132,48 @@ export const StickerForm = component$(() => {
                         </select>
                     </div>
                 </div>
-                <button
-                    type="submit"
-                    class="pt-3 pb-2 bg-palette-primary text-white w-full mt-2 rounded-sm font-primary font-semibold text-xl flex 
+                {session.value?.user ? (
+                    <button
+                        type="submit"
+                        class="pt-3 pb-2 bg-palette-primary text-white w-full mt-2 rounded-sm font-primary font-semibold text-xl flex 
                       justify-center items-baseline  hover:bg-palette-dark"
-                    aria-label="cart-button"
-                >
-                    Add To Cart
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="w-6 h-6 ml-2"
-                        viewBox="0 0 24 24"
+                        aria-label="cart-button"
                     >
-                        <path
-                            fill="white"
-                            d="M17 18c-1.11 0-2 .89-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2M1 2v2h2l3.6 7.59l-1.36 2.45c-.15.28-.24.61-.24.96a2 2 0 0 0 2 2h12v-2H7.42a.25.25 0 0 1-.25-.25c0-.05.01-.09.03-.12L8.1 13h7.45c.75 0 1.41-.42 1.75-1.03l3.58-6.47c.07-.16.12-.33.12-.5a1 1 0 0 0-1-1H5.21l-.94-2M7 18c-1.11 0-2 .89-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2Z"
-                        />
-                    </svg>
-                </button>
+                        Add To Cart
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="w-6 h-6 ml-2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                fill="white"
+                                d="M17 18c-1.11 0-2 .89-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2M1 2v2h2l3.6 7.59l-1.36 2.45c-.15.28-.24.61-.24.96a2 2 0 0 0 2 2h12v-2H7.42a.25.25 0 0 1-.25-.25c0-.05.01-.09.03-.12L8.1 13h7.45c.75 0 1.41-.42 1.75-1.03l3.58-6.47c.07-.16.12-.33.12-.5a1 1 0 0 0-1-1H5.21l-.94-2M7 18c-1.11 0-2 .89-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2Z"
+                            />
+                        </svg>
+                    </button>
+                ) : (
+                    <button
+                        type="button"
+                        class="pt-3 pb-2 bg-palette-primary text-white w-full mt-2 rounded-sm font-primary font-semibold text-xl flex 
+                        justify-center items-baseline  hover:bg-palette-dark opacity-25 "
+                        aria-label="cart-button"
+                        onClick$={() => {
+                            alert("You must be logged in to add Stickers to Cart");
+                        }}
+                    >
+                        Add To Cart
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="w-6 h-6 ml-2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                fill="white"
+                                d="M17 18c-1.11 0-2 .89-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2M1 2v2h2l3.6 7.59l-1.36 2.45c-.15.28-.24.61-.24.96a2 2 0 0 0 2 2h12v-2H7.42a.25.25 0 0 1-.25-.25c0-.05.01-.09.03-.12L8.1 13h7.45c.75 0 1.41-.42 1.75-1.03l3.58-6.47c.07-.16.12-.33.12-.5a1 1 0 0 0-1-1H5.21l-.94-2M7 18c-1.11 0-2 .89-2 2a2 2 0 0 0 2 2a2 2 0 0 0 2-2a2 2 0 0 0-2-2Z"
+                            />
+                        </svg>
+                    </button>
+                )}
             </Form>
         </div>
     );
