@@ -1,14 +1,14 @@
-import { component$, useComputed$, useSignal } from "@builder.io/qwik";
+import { component$, useContext } from "@builder.io/qwik";
 import { Form, Link } from "@builder.io/qwik-city";
+import { CartLengthContext } from "~/lib/store";
 import { useAuthSession, useAuthSignin, useAuthSignout } from "~/routes/plugin@auth";
 
 export default component$(() => {
     const session = useAuthSession();
     const signIn = useAuthSignin();
     const signOut = useAuthSignout();
-    const cart = useSignal([]);
 
-    const cartLength = useComputed$(() => cart.value.length);
+    const cartLength = useContext(CartLengthContext);
 
     return (
         <header class="border-b border-palette-lighter sticky top-0 z-20 bg-white">
@@ -44,7 +44,7 @@ export default component$(() => {
                                 </svg>
 
                                 {cartLength.value === 0 ? null : (
-                                    <div class="absolute top-0 right-0 px-2 py-1 text-xs font-semibold text-gray-900 transform translate-x-10 -translate-y-3 bg-yellow-300 rounded-full">
+                                    <div class="absolute top-0 right-0 px-2 py-1 text-xs font-semibold text-gray-900 transform translate-x-4 -translate-y-3 bg-yellow-300 rounded-full">
                                         {cartLength.value}
                                     </div>
                                 )}
@@ -53,7 +53,7 @@ export default component$(() => {
                                 <input type="hidden" name="callbackUrl" value="/" />
                                 <button
                                     class="bg-palette-primary text-white text-lg font-primary font-semibold pt-2 pb-1 leading-relaxed flex 
-    justify-center items-center focus:ring-1 focus:ring-palette-light focus:outline-none w-28  hover:bg-palette-dark rounded-lg"
+    justify-center items-center focus:ring-1 focus:ring-palette-light focus:outline-none w-24 px-1  hover:bg-palette-dark rounded-lg"
                                 >
                                     Sign Out
                                 </button>

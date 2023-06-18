@@ -43,16 +43,7 @@ export default component$(() => {
                                     </Link>
                                 </td>
                                 <td class="font-primary font-medium px-4 sm:px-6 py-4">
-                                    <input
-                                        type="number"
-                                        inputMode="numeric"
-                                        id="variant-quantity"
-                                        name="variant-quantity"
-                                        min="1"
-                                        step="1"
-                                        value={item.quantity}
-                                        class="text-gray-900 form-input border border-gray-300 w-16 rounded-sm focus:border-palette-light focus:ring-palette-light"
-                                    />
+                                    {item.quantity}
                                 </td>
                                 <td class="font-primary text-base font-light px-4 sm:px-6 py-4 hidden sm:table-cell">
                                     <Price

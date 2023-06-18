@@ -1,7 +1,7 @@
 /* eslint-disable qwik/jsx-img */
 
 import { component$, useContext } from "@builder.io/qwik";
-import { StickerContext } from "~/routes/sticker/[stickerId]";
+import { StickerContext } from "~/lib/store";
 
 export default component$(() => {
     const sticker = useContext(StickerContext);

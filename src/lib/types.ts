@@ -6,6 +6,10 @@ export interface ProductListingsProps {
     description: string;
 }
 
+export interface CartStore{
+    cartLength: number;
+}
+
 export interface CartItem{
     stickerName:string;
     stickerImage: string;
