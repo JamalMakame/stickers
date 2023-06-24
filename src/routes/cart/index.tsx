@@ -1,4 +1,4 @@
-import { component$, useContext, useContextProvider, useStore, useTask$ } from "@builder.io/qwik";
+import { component$, useContextProvider, useStore, useTask$ } from "@builder.io/qwik";
 import { Form, Link, routeAction$, routeLoader$ } from "@builder.io/qwik-city";
 import CartTable from "~/components/cart-table/cart-table";
 import PageTitle from "~/components/page-title/page-title";
